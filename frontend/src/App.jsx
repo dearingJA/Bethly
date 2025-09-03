@@ -1,24 +1,65 @@
-// frontend/src/App.js
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function App() {
+  const [url, setUrl] = useState("");
   const [price, setPrice] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetch("http://localhost:8000/api/price")
-      .then((res) => res.json())
-      .then((data) => setPrice(data.price))
-      .catch((err) => console.error(err));
-  }, []);
+  const normalizeUrl = (input) => {
+    if (!input.startsWith("http://") && !input.startsWith("https://")) {
+      return "https://" + input;
+    }
+    return input;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setPrice("");
+
+    const normalizedUrl = normalizeUrl(url)
+
+    try {
+      const res = await fetch(`http://localhost:8000/scrape?url=${encodeURIComponent(normalizedUrl)}`);
+      const data = await res.json();
+
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setPrice(data.price);
+      }
+    } catch (err) {
+      setError("Failed to fetch price. Check your URL or backend.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div>
-      <h1>Amazon Price:</h1>
-      <p>{price ? `$${price}` : "Loading..."}</p>
-      <p>test</p>
+    <div style={{ maxWidth: "500px", margin: "50px auto", fontFamily: "Arial" }}>
+      <h1>Item Price Checker</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Paste product URL"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+        />
+        <button type="submit" style={{ padding: "10px 20px" }}>
+          Get Price
+        </button>
+      </form>
+
+      {loading && <p>Loading...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {price && <p>Price: <strong>${price}</strong></p>}
     </div>
   );
 }
 
 export default App;
+
 
