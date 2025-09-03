@@ -22,7 +22,16 @@ function App() {
     const normalizedUrl = normalizeUrl(url)
 
     try {
-      const res = await fetch(`http://localhost:8000/scrape?url=${encodeURIComponent(normalizedUrl)}`);
+      const res = await fetch("http://localhost:8000/scrape", {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({ url: normalizedUrl }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error: ${res.status}`);
+      }
+
       const data = await res.json();
 
       if (data.error) {

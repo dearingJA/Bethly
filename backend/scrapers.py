@@ -31,7 +31,7 @@ def create_driver():
     return(webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options))
 
 
-def scrape_amazon(url: str):
+def scrape_amazon(url):
     driver = create_driver()
     try:
         driver.get(url)
