@@ -36,5 +36,4 @@ def scrape(request: ScrapeRequest):
     price = None
     if site == "www.amazon.com":
         price = scrape_amazon(url_str)
-
     return ScrapeResponse(site=site, price=price)
