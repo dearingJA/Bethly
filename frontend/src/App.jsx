@@ -6,6 +6,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [itemName, setItemName] = useState("");
+  const [itemList, setItemList] = useState([]);
+
   const normalizeUrl = (input) => {
     if (!input.startsWith("http://") && !input.startsWith("https://")) {
       return "https://" + input;
@@ -38,7 +41,21 @@ function App() {
         setError(data.error);
       } else {
         setPrice(data.price);
+
+        // create and update list
+        setItemList(prev => {
+          const new_list = [...prev, { name: itemName, price: data.price, image: data.img_url, url: data.url }];
+          // console.log(new_list);
+          return new_list
+        }); 
       }
+
+      // let listItem = `Item: ${itemName}, Item Price: ${data.price}, Item Site: ${data.site}, Item Url: ${data.url}, Image URL: ${data.image_url}`
+
+      // Reset Name and Url values
+      setItemName("");
+      setUrl("");
+
     } catch (err) {
       setError("Failed to fetch price. Check your URL or backend.");
     } finally {
@@ -49,7 +66,28 @@ function App() {
   return (
     <div style={{ maxWidth: "500px", margin: "50px auto", fontFamily: "Arial" }}>
       <h1>Item Price Checker</h1>
+      <ul>
+        {itemList.map((item, index) => (
+          <li key={index} style= {{ marginBottom: "20px" }}>
+            <p>{item.name}, {item.price}</p>
+            <a href={item.url} target="_blank" rel="noopener noreferrer">
+              <img
+                src={item.image}
+                alt="Item image"
+                style= {{ width: "150px", display: "block", marginBottom: "5px" }}
+              />
+            </a>
+          </li>
+        ))}
+      </ul>
       <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Name for Item"
+          value={itemName}
+          onChange={(e) => setItemName(e.target.value)}
+          style={{ width: "100%", padding: "10px", marginBottom: "5px" }}
+        />
         <input
           type="text"
           placeholder="Paste product URL"

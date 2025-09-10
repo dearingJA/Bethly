@@ -13,3 +13,5 @@ class ScrapeRequest(BaseModel):
 class ScrapeResponse(BaseModel):
     site: str
     price: str | None
+    url: str
+    img_url: str | None

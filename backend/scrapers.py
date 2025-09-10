@@ -33,6 +33,8 @@ def create_driver():
 
 def scrape_amazon(url):
     driver = create_driver()
+
+    # Attempt to scrape page for price
     try:
         driver.get(url)
         time.sleep(3)
@@ -44,6 +46,14 @@ def scrape_amazon(url):
             price = whole + "." + fraction
         else:
             price = None
+
+        # Attempt to get image
+        try:
+            img_element = driver.find_element(By.ID, "landingImage")
+            img_url = img_element.get_attribute("src")
+        except Exception:
+            img_url = None
+
     finally:
         driver.quit()
-    return price
+    return price, img_url
