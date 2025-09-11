@@ -45,7 +45,7 @@ function App() {
         // create and update list
         setItemList(prev => {
           const new_list = [...prev, { name: itemName, price: data.price, image: data.img_url, url: data.url }];
-          // console.log(new_list);
+          console.log(new_list);
           return new_list
         }); 
       }
@@ -66,20 +66,7 @@ function App() {
   return (
     <div style={{ maxWidth: "500px", margin: "50px auto", fontFamily: "Arial" }}>
       <h1>Item Price Checker</h1>
-      <ul>
-        {itemList.map((item, index) => (
-          <li key={index} style= {{ marginBottom: "20px" }}>
-            <p>{item.name}, {item.price}</p>
-            <a href={item.url} target="_blank" rel="noopener noreferrer">
-              <img
-                src={item.image}
-                alt="Item image"
-                style= {{ width: "150px", display: "block", marginBottom: "5px" }}
-              />
-            </a>
-          </li>
-        ))}
-      </ul>
+      
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -103,6 +90,21 @@ function App() {
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {price && <p>Price: <strong>${price}</strong></p>}
+      <h2>Item List</h2>
+      <ul>
+        {itemList.map((item, index) => (
+          <li key={index} style= {{ marginBottom: "20px" }}>
+            <p>{item.name}, {item.price}</p>
+            <a href={item.url} target="_blank" rel="noopener noreferrer">
+              <img
+                src={item.image}
+                alt="Item image"
+                style= {{ width: "150px", display: "block", marginBottom: "5px" }}
+              />
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
