@@ -3,6 +3,7 @@ from pydantic import BaseModel, HttpUrl
 
 class ScrapeRequest(BaseModel):
     url: HttpUrl
+    name: str
 
     # property bc type url obj not str
     @property

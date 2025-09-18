@@ -28,7 +28,7 @@ function App() {
       const res = await fetch("http://localhost:8000/scrape", {
         method: "POST",
         headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({ url: normalizedUrl }),
+        body: JSON.stringify({ url: normalizedUrl, name: itemName}),
       });
 
       if (!res.ok) {

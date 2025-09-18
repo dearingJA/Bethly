@@ -1,11 +1,18 @@
-import requests
-import os
+# import requests
+# import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from scrapers import detect_site, scrape_amazon
 from schemas import ScrapeRequest, ScrapeResponse
+
+from models import Base, Item
+from database import engine, SessionLocal
+from sqlalchemy.orm import Session
+
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Bethly Backend API")
 
@@ -23,22 +30,44 @@ app.add_middleware(
 )
 
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello from FastAPI!"}
 
 
 @app.post("/scrape", response_model=ScrapeResponse)
-def scrape(request: ScrapeRequest):
+def scrape(request: ScrapeRequest, db: Session = Depends(get_db)):
     url_str = str(request.url_str)
-
     site = detect_site(url_str)
 
     if site == "unsupported":
         return ScrapeResponse(site=site, price=None, url=url_str, img_url=None)
 
     price = None
+    img_url = None
+
+    price = None
     if site == "www.amazon.com":
         price, img_url = scrape_amazon(url_str)
+
+    # Save Item
+    new_item = Item(
+        name=request.name,
+        site=site,
+        url=url_str,
+        img_url=img_url,
+        price=price
+    )
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
 
     return ScrapeResponse(site=site, price=price, url=url_str, img_url=img_url)
