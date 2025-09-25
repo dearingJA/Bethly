@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   const [url, setUrl] = useState("");
@@ -8,6 +8,23 @@ function App() {
 
   const [itemName, setItemName] = useState("");
   const [itemList, setItemList] = useState([]);
+
+
+  const fetchItems = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/items/");
+      if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+      const data = await res.json();
+      setItemList(data)
+    } catch (err) {
+      console.log(err);
+      setError("Failed to load items.");
+    }
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
 
   const normalizeUrl = (input) => {
     if (!input.startsWith("http://") && !input.startsWith("https://")) {
@@ -25,36 +42,24 @@ function App() {
     const normalizedUrl = normalizeUrl(url)
 
     try {
-      const res = await fetch("http://localhost:8000/scrape", {
+      const res = await fetch("http://localhost:8000/items/", {
         method: "POST",
         headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({ url: normalizedUrl, name: itemName}),
+        body: JSON.stringify({
+          name: itemName,
+          url: normalizedUrl
+        }),
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error: ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
 
-      const data = await res.json();
+      const newItem = await res.json();
 
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setPrice(data.price);
+      setItemList((prev) => [...prev, newItem]);
 
-        // create and update list
-        setItemList(prev => {
-          const new_list = [...prev, { name: itemName, price: data.price, image: data.img_url, url: data.url }];
-          console.log(new_list);
-          return new_list
-        }); 
-      }
-
-      // let listItem = `Item: ${itemName}, Item Price: ${data.price}, Item Site: ${data.site}, Item Url: ${data.url}, Image URL: ${data.image_url}`
-
-      // Reset Name and Url values
       setItemName("");
       setUrl("");
+      setPrice(newItem.price);
 
     } catch (err) {
       setError("Failed to fetch price. Check your URL or backend.");
@@ -62,53 +67,56 @@ function App() {
       setLoading(false);
     }
   };
-
   return (
-    <div style={{ maxWidth: "500px", margin: "50px auto", fontFamily: "Arial" }}>
-      <h1>Item Price Checker</h1>
-      
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Name for Item"
-          value={itemName}
-          onChange={(e) => setItemName(e.target.value)}
-          style={{ width: "100%", padding: "10px", marginBottom: "5px" }}
-        />
-        <input
-          type="text"
-          placeholder="Paste product URL"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-        />
-        <button type="submit" style={{ padding: "10px 20px" }}>
-          Get Price
-        </button>
-      </form>
+  <div style={{ maxWidth: "500px", margin: "50px auto", fontFamily: "Arial" }}>
+    <h1>Item Price Checker</h1>
 
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {price && <p>Price: <strong>${price}</strong></p>}
-      <h2>Item List</h2>
-      <ul>
-        {itemList.map((item, index) => (
-          <li key={index} style= {{ marginBottom: "20px" }}>
-            <p>{item.name}, {item.price}</p>
-            <a href={item.url} target="_blank" rel="noopener noreferrer">
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Name for Item"
+        value={itemName}
+        onChange={(e) => setItemName(e.target.value)}
+        style={{ width: "100%", padding: "10px", marginBottom: "5px" }}
+      />
+      <input
+        type="text"
+        placeholder="Paste product URL"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+      />
+      <button type="submit" style={{ padding: "10px 20px" }}>
+        Get Price
+      </button>
+    </form>
+
+    {loading && <p>Loading...</p>}
+    {error && <p style={{ color: "red" }}>{error}</p>}
+    {price && <p>Price: <strong>${price}</strong></p>}
+
+    <h2>Item List</h2>
+    <ul>
+      {itemList.map((item) => (
+        <li key={item.id} style={{ marginBottom: "20px" }}>
+          <p>{item.name}, {item.price}</p>
+          <a href={item.url} target="_blank" rel="noopener noreferrer">
+            {item.img_url && (
               <img
-                src={item.image}
+                src={item.img_url}
                 alt="Item image"
-                style= {{ width: "150px", display: "block", marginBottom: "5px" }}
+                style={{ width: "150px", display: "block", marginBottom: "5px" }}
               />
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
   );
 }
 
+  
 export default App;
 
 

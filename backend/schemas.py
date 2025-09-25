@@ -1,18 +1,18 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, ConfigDict
 
 
-class ScrapeRequest(BaseModel):
-    url: HttpUrl
+class ItemBase(BaseModel):
     name: str
-
-    # property bc type url obj not str
-    @property
-    def url_str(self) -> str:
-        return str(self.url)
-
-
-class ScrapeResponse(BaseModel):
-    site: str
-    price: str | None
     url: str
-    img_url: str | None
+    price: float | None = None
+    img_url: str | None = None
+
+
+class ItemCreate(ItemBase):
+    pass
+
+
+class Item(ItemBase):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)

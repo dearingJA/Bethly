@@ -1,18 +1,16 @@
-# import requests
-# import os
-
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from scrapers import detect_site, scrape_amazon
-from schemas import ScrapeRequest, ScrapeResponse
 
-from models import Base, Item
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 
+import models
+import schemas
 
-Base.metadata.create_all(bind=engine)
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Bethly Backend API")
 
@@ -43,31 +41,43 @@ async def root():
     return {"message": "Hello from FastAPI!"}
 
 
-@app.post("/scrape", response_model=ScrapeResponse)
-def scrape(request: ScrapeRequest, db: Session = Depends(get_db)):
-    url_str = str(request.url_str)
+@app.get("/items/", response_model=list[schemas.Item])
+def read_items(db: Session = Depends(get_db)):
+    items = db.query(models.Item).all()
+    # for i in items:
+    #     print(i.name, i.price, i.image)
+    return items
+
+
+@app.post("/items/", response_model=schemas.Item)
+def create_item(item: schemas.ItemCreate, db: Session = Depends(get_db)):
+    url_str = item.url
     site = detect_site(url_str)
 
-    if site == "unsupported":
-        return ScrapeResponse(site=site, price=None, url=url_str, img_url=None)
+    price = "0"
+    img_url = ""
 
-    price = None
-    img_url = None
-
-    price = None
     if site == "www.amazon.com":
         price, img_url = scrape_amazon(url_str)
 
-    # Save Item
-    new_item = Item(
-        name=request.name,
+    db_item = models.Item(
+        name=item.name,
         site=site,
-        url=url_str,
-        img_url=img_url,
-        price=price
+        url=item.url,
+        price=price,
+        img_url=img_url
     )
-    db.add(new_item)
+    db.add(db_item)
     db.commit()
-    db.refresh(new_item)
+    db.refresh(db_item)
+    return db_item
 
-    return ScrapeResponse(site=site, price=price, url=url_str, img_url=img_url)
+
+@app.delete("/items/{item_id}")
+def delete_item(item_id: int, db: Session = Depends(get_db)):
+    db_item = db.query(models.Item).filer(models.Item.id == item_id).first()
+    if not db_item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    db.delete(db_item)
+    db.commit()
+    return {"ok": True}
