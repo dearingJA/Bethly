@@ -19,6 +19,10 @@ def detect_site(url: str) -> str:
         return site
 
 
+def parse_price(price_str: str) -> float:
+    return float(price_str.replace(",", ""))
+
+
 def create_driver():
     options = Options()
     options.add_argument('--headless')
@@ -44,6 +48,7 @@ def scrape_amazon(url):
             whole = whole_list[0].text
             fraction = fraction_list[0].text if fraction_list else "00"
             price = whole + "." + fraction
+            price = parse_price(price)
         else:
             price = None
 
