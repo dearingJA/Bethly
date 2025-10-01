@@ -1,15 +1,16 @@
 import React from 'react';
 import ItemRow from './ItemRow';
+import './ItemTable.css'
 
 function ItemTable({ items }) {
   return (
-    <table className='w-full border border-gray-200'>
-      <thead className='bg-gray-100'>
+    <table className='item-table'>
+      <thead className='item-thead'>
         <tr>
-          <th className='px-4 py-2'>Picture</th>
-          <th className='px-4 py-2'>ID</th>
-          <th className='px-4 py-2'>Name</th>
-          <th className='px-4 py-2'>Price</th>
+          <th className='item-th'>Picture</th>
+          <th className='item-th'>ID</th>
+          <th className='item-th'>Name</th>
+          <th className='item-th'>Price</th>
         </tr>
       </thead>
       <tbody>

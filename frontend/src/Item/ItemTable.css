@@ -1,0 +1,16 @@
+.item-table {
+  width: 100%;         
+  border: 1px solid gray;
+  border-collapse: collapse;
+}
+
+.item-thead {
+  background-color: #f3f4f6;
+}
+
+.item-th {
+  padding: 0.5rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+

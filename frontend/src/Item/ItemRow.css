@@ -1,0 +1,19 @@
+.item-row {
+  border-bottom: 1px solid gray;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.item-row:hover {
+  background-color: #f9fafb;
+}
+
+.cell {
+  padding: 0.5rem 1rem;
+}
+
+.item-image {
+  width: 150px;
+  display: block;
+  margin-bottom: 5px;
+}
+

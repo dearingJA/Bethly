@@ -1,3 +1,4 @@
+import './App.css'
 import { useState, useEffect } from "react";
 import ItemTable from "./Item/ItemTable";
 
@@ -73,7 +74,7 @@ function App() {
     }
   };
   return (
-  <div style={{ maxWidth: "500px", margin: "50px auto", fontFamily: "Arial" }}>
+  <div className='app-container'>
     <h1>Item Price Checker</h1>
 
     <form onSubmit={handleSubmit}>
@@ -82,29 +83,29 @@ function App() {
         placeholder="Name for Item"
         value={itemName}
         onChange={(e) => setItemName(e.target.value)}
-        style={{ width: "100%", padding: "10px", marginBottom: "5px" }}
+        className='form-input'
       />
       <input
         type="text"
         placeholder="Paste product URL"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
-        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+        className='form-input'
       />
       <input
         type="text"
         placeholder="Group Name (by default set as default)"
         value={group}
         onChange={(e) => setGroup(e.target.value)}
-        style={{ width: "100%", padding: "10px", marginBottom: "5px" }}
+        className='form-input'
       />
-      <button type="submit" style={{ padding: "10px 20px" }}>
+      <button type="submit" className='form-button'>
         Get Price
       </button>
     </form>
 
     {loading && <p>Loading...</p>}
-    {error && <p style={{ color: "red" }}>{error}</p>}
+    {error && <p className='error-text'>{error}</p>}
     {price && <p>Price: <strong>${price}</strong></p>}
 
     <h2>Item List</h2>

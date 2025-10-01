@@ -40,3 +40,25 @@
 .read-the-docs {
   color: #888;
 }
+
+.app-container {
+  max-width: 500px;
+  margin: 50px auto;
+  font-family: Arial, sans-serif;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.form-button {
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.error-text {
+  color: red;
+}
