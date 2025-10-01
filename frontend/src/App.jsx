@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import ItemTable from "./Item/ItemTable";
 
 function App() {
   const [url, setUrl] = useState("");
@@ -107,22 +108,7 @@ function App() {
     {price && <p>Price: <strong>${price}</strong></p>}
 
     <h2>Item List</h2>
-    <ul>
-      {itemList.map((item) => (
-        <li key={item.id} style={{ marginBottom: "20px" }}>
-          <p>{item.name}, {item.price}</p>
-          <a href={item.url} target="_blank" rel="noopener noreferrer">
-            {item.img_url && (
-              <img
-                src={item.img_url}
-                alt="Item image"
-                style={{ width: "150px", display: "block", marginBottom: "5px" }}
-              />
-            )}
-          </a>
-        </li>
-      ))}
-    </ul>
+    <ItemTable items={itemList}/>
   </div>
   );
 }
