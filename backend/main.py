@@ -61,7 +61,9 @@ def create_item(item: schemas.ItemCreate, db: Session = Depends(get_db)):
         price, img_url = scrape_amazon(url_str)
 
     db_item = models.Item(
+        user=item.user,
         name=item.name,
+        group=item.group,
         site=site,
         url=item.url,
         price=price,

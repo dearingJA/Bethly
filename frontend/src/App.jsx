@@ -8,6 +8,7 @@ function App() {
 
   const [itemName, setItemName] = useState("");
   const [itemList, setItemList] = useState([]);
+  const [group, setGroup] = useState("");
 
 
   const fetchItems = async () => {
@@ -46,7 +47,9 @@ function App() {
         method: "POST",
         headers: { "Content-Type": "application/json"},
         body: JSON.stringify({
+          user: "username",
           name: itemName,
+          group: group,
           url: normalizedUrl
         }),
       });
@@ -59,6 +62,7 @@ function App() {
 
       setItemName("");
       setUrl("");
+      setGroup("");
       setPrice(newItem.price);
 
     } catch (err) {
@@ -85,6 +89,13 @@ function App() {
         value={url}
         onChange={(e) => setUrl(e.target.value)}
         style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+      />
+      <input
+        type="text"
+        placeholder="Group Name (by default set as default)"
+        value={group}
+        onChange={(e) => setGroup(e.target.value)}
+        style={{ width: "100%", padding: "10px", marginBottom: "5px" }}
       />
       <button type="submit" style={{ padding: "10px 20px" }}>
         Get Price
