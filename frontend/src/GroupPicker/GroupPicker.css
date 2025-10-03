@@ -1,0 +1,30 @@
+.group-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.group-select {
+  min-width: 200px;
+}
+
+.group-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+

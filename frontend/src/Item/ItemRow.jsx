@@ -16,6 +16,7 @@ function ItemRow({ item }) {
         </a>
       </td>
       <td className='cell'>{item.id}</td>
+      <td className='cell'>{item.group}</td>
       <td className='cell'>{item.name}</td>
       <td className='cell'>{item.price}</td>
     </tr>

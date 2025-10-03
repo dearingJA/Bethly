@@ -9,6 +9,7 @@ function ItemTable({ items }) {
         <tr>
           <th className='item-th'>Picture</th>
           <th className='item-th'>ID</th>
+          <th className='item-th'>Group</th>
           <th className='item-th'>Name</th>
           <th className='item-th'>Price</th>
         </tr>

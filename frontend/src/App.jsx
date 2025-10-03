@@ -1,16 +1,21 @@
 import './App.css'
 import { useState, useEffect } from "react";
+
 import ItemTable from "./Item/ItemTable";
+import GroupPicker from './GroupPicker/GroupPicker';
 
 function App() {
-  const [url, setUrl] = useState("");
-  const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  
+  const [url, setUrl] = useState("");
+  const [price, setPrice] = useState("");
 
-  const [itemName, setItemName] = useState("");
   const [itemList, setItemList] = useState([]);
-  const [group, setGroup] = useState("");
+  const [itemName, setItemName] = useState("");
+
+  const [groups, setGroups] = useState(["default"]);
+  const [group, setGroup] = useState("default");
 
 
   const fetchItems = async () => {
@@ -19,6 +24,11 @@ function App() {
       if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
       const data = await res.json();
       setItemList(data)
+
+      const uniqueGroups = Array.from(
+        new Set(["default", ...data.map((item) => item.group)])
+      );
+      setGroups(uniqueGroups);
     } catch (err) {
       console.log(err);
       setError("Failed to load items.");
@@ -35,12 +45,26 @@ function App() {
     }
     return input;
   };
+  
+  const groupByGroup = (items, key) => {
+    return items.reduce((result, item) => {
+      (result[item[key]] = result[item[key]] || []).push(item);
+      return result;
+    }, {});
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
     setPrice("");
+
+    // don't submit on empty attributes
+    if (!itemName.trim() || !url.trim()) {
+      setError("Please enter both item name and valid URL for the item.");
+      return;
+    }
+
+    setLoading(true);
 
     const normalizedUrl = normalizeUrl(url)
 
@@ -92,13 +116,11 @@ function App() {
         onChange={(e) => setUrl(e.target.value)}
         className='form-input'
       />
-      <input
-        type="text"
-        placeholder="Group Name (by default set as default)"
-        value={group}
-        onChange={(e) => setGroup(e.target.value)}
-        className='form-input'
-      />
+      <GroupPicker 
+          value={group} 
+          onChange={setGroup} 
+          groups={groups} 
+          setGroups={setGroups} />
       <button type="submit" className='form-button'>
         Get Price
       </button>
@@ -109,12 +131,17 @@ function App() {
     {price && <p>Price: <strong>${price}</strong></p>}
 
     <h2>Item List</h2>
-    <ItemTable items={itemList}/>
+
+    {Object.entries(groupByGroup(itemList, "group")).map(([groupName, items]) => (
+      <div key={groupName} className="group-section">
+        <h3>{groupName}</h3>
+        <ItemTable items={items} />
+      </div>
+    ))}
+
   </div>
+
   );
 }
-
   
 export default App;
-
-
