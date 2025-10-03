@@ -53,6 +53,10 @@ function App() {
     }, {});
   };
 
+  const handleItemDelete = (id) => {
+    setItemList((prev) => prev.filter((item) => item.id !== id));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -97,6 +101,9 @@ function App() {
       setLoading(false);
     }
   };
+
+  const groupedItems = Object.entries(groupByGroup(itemList, "group"));
+  
   return (
   <div className='app-container'>
     <h1>Item Price Checker</h1>
@@ -132,15 +139,23 @@ function App() {
 
     <h2>Item List</h2>
 
-    {Object.entries(groupByGroup(itemList, "group")).map(([groupName, items]) => (
-      <div key={groupName} className="group-section">
-        <h3>{groupName}</h3>
-        <ItemTable items={items} />
-      </div>
-    ))}
+    {/* Display groups or display message */} 
+
+    {groupedItems.length > 0 ? (
+      groupedItems.map(([groupName, items]) => (
+        <div key={groupName} className="group-section">
+          <ItemTable
+            groupName={groupName}
+            items={items}
+            onItemDelete={handleItemDelete}
+          />
+        </div>
+      ))
+    ) : (
+      <div>It looks like you have no items ☹️ Add items above 😊 </div>
+    )}
 
   </div>
-
   );
 }
   

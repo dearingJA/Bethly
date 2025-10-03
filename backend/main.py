@@ -77,7 +77,7 @@ def create_item(item: schemas.ItemCreate, db: Session = Depends(get_db)):
 
 @app.delete("/items/{item_id}")
 def delete_item(item_id: int, db: Session = Depends(get_db)):
-    db_item = db.query(models.Item).filer(models.Item.id == item_id).first()
+    db_item = db.query(models.Item).filter(models.Item.id == item_id).first()
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
     db.delete(db_item)

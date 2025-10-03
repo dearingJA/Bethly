@@ -1,11 +1,11 @@
 .group-picker {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
 }
 
 .group-select {
-  min-width: 200px;
+  width: 10vw;
 }
 
 .group-add {
